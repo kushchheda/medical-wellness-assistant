@@ -1,4 +1,4 @@
-# 🩺 MedAssist AI — Medical Wellness Assistant
+# 🩺 MedAssist AI - Medical Wellness Assistant
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat&logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-3.0-000000?style=flat&logo=flask&logoColor=white)
@@ -13,7 +13,7 @@ A **Retrieval-Augmented Generation (RAG)** chatbot that answers general medical 
 
 ## 📸 Demo
 
-> *Chat interface running locally — ask about symptoms, mental health, or wellness tips*
+> *Chat interface running locally - ask about symptoms, mental health, or wellness tips*
 
 ![MedAssist AI Screenshot](docs/screenshot.png)
 
@@ -21,11 +21,11 @@ A **Retrieval-Augmented Generation (RAG)** chatbot that answers general medical 
 
 ## ✨ Features
 
-- 🔍 **RAG Pipeline** — Retrieves relevant passages from 7 mental health PDFs before generating answers, reducing hallucination
-- 🧠 **Semantic Search** — HuggingFace `all-MiniLM-L6-v2` embeddings stored and queried via Pinecone
-- 💬 **Conversational UI** — Clean chat interface with typing indicators and message timestamps
-- ⚠️ **Safety-First Prompting** — Always reminds users to consult a licensed physician; declines out-of-scope questions
-- 📱 **Responsive Design** — Works on desktop and mobile
+- 🔍 **RAG Pipeline** - Retrieves relevant passages from 7 mental health PDFs before generating answers, reducing hallucination
+- 🧠 **Semantic Search** - HuggingFace `all-MiniLM-L6-v2` embeddings stored and queried via Pinecone
+- 💬 **Conversational UI** - Clean chat interface with typing indicators and message timestamps
+- ⚠️ **Safety-First Prompting** - Always reminds users to consult a licensed physician; declines out-of-scope questions
+- 📱 **Responsive Design** - Works on desktop and mobile
 
 ---
 
@@ -58,7 +58,7 @@ User Question
 ```
 medical-wellness-assistant/
 │
-├── app.py                  # Flask app — routes & RAG pipeline setup
+├── app.py                  # Flask app - routes & RAG pipeline setup
 ├── requirements.txt        # Python dependencies
 ├── .env.example            # Environment variable template
 ├── .gitignore
@@ -184,4 +184,4 @@ This application is for **educational and informational purposes only**. It is n
 
 ## 📄 License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License - see [LICENSE](LICENSE) for details.
