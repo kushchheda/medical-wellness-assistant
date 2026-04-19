@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MedAssist AI — Medical Wellness Assistant</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+    <!-- Background decorative blobs -->
+    <div class="bg-blob bg-blob--1"></div>
+    <div class="bg-blob bg-blob--2"></div>
+    <div class="bg-blob bg-blob--3"></div>
+
+    <div class="app-wrapper">
+
+        <!-- ── Sidebar ─────────────────────────────────── -->
+        <aside class="sidebar">
+            <div class="sidebar__brand">
+                <div class="sidebar__logo">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+                <span class="sidebar__title">MedAssist <em>AI</em></span>
+            </div>
+
+            <nav class="sidebar__nav">
+                <p class="sidebar__nav-label">Menu</p>
+                <ul>
+                    <li class="sidebar__nav-item sidebar__nav-item--active">
+                        <i class="fa-regular fa-comment-dots"></i> Chat
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <i class="fa-regular fa-file-lines"></i> About
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <i class="fa-regular fa-circle-question"></i> FAQ
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar__disclaimer">
+                <i class="fa-solid fa-shield-halved"></i>
+                <p>This assistant provides general wellness information only. Always consult a licensed physician for medical decisions.</p>
+            </div>
+        </aside>
+
+        <!-- ── Chat Panel ──────────────────────────────── -->
+        <main class="chat-panel">
+
+            <!-- Header -->
+            <header class="chat-header">
+                <div class="chat-header__avatar">
+                    <i class="fa-solid fa-stethoscope"></i>
+                    <span class="chat-header__status"></span>
+                </div>
+                <div class="chat-header__info">
+                    <h1>MedAssist AI</h1>
+                    <p>Online &mdash; Powered by GPT &amp; Pinecone RAG</p>
+                </div>
+                <div class="chat-header__badges">
+                    <span class="badge badge--rag">RAG</span>
+                    <span class="badge badge--llm">LLM</span>
+                </div>
+            </header>
+
+            <!-- Messages -->
+            <div class="chat-messages" id="chatMessages">
+
+                <!-- Welcome message -->
+                <div class="message message--bot" id="welcomeMessage">
+                    <div class="message__avatar">
+                        <i class="fa-solid fa-stethoscope"></i>
+                    </div>
+                    <div class="message__body">
+                        <div class="message__bubble">
+                            <p>Hello! I'm <strong>MedAssist AI</strong>, your personal medical wellness assistant. I can help answer general health and wellness questions based on curated medical literature.</p>
+                            <p style="margin-top: 10px; font-size: 0.85rem; opacity: 0.75;">
+                                <i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i>
+                                I'm not a licensed physician. Always consult a healthcare professional for serious concerns.
+                            </p>
+                        </div>
+                        <span class="message__time" id="welcomeTime"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Input Area -->
+            <footer class="chat-footer">
+                <div class="chat-input-wrapper">
+                    <input
+                        type="text"
+                        id="userInput"
+                        placeholder="Ask about symptoms, conditions, or wellness tips…"
+                        autocomplete="off"
+                        aria-label="Your message"
+                    />
+                    <button id="sendBtn" aria-label="Send message">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+                <p class="chat-footer__hint">
+                    Press <kbd>Enter</kbd> to send &nbsp;·&nbsp; Powered by OpenAI + Pinecone
+                </p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        // ── Helpers ─────────────────────────────────────────────
+        function currentTime() {
+            const d = new Date();
+            const h = d.getHours();
+            const m = String(d.getMinutes()).padStart(2, "0");
+            const ampm = h >= 12 ? "PM" : "AM";
+            return `${h % 12 || 12}:${m} ${ampm}`;
+        }
+
+        function scrollToBottom() {
+            const msgs = document.getElementById("chatMessages");
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        function appendUserMessage(text) {
+            const time = currentTime();
+            const html = `
+                <div class="message message--user">
+                    <div class="message__body">
+                        <div class="message__bubble">${escapeHtml(text)}</div>
+                        <span class="message__time">${time}</span>
+                    </div>
+                    <div class="message__avatar message__avatar--user">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>`;
+            $("#chatMessages").append(html);
+            scrollToBottom();
+        }
+
+        function appendBotMessage(text) {
+            const time = currentTime();
+            const html = `
+                <div class="message message--bot">
+                    <div class="message__avatar">
+                        <i class="fa-solid fa-stethoscope"></i>
+                    </div>
+                    <div class="message__body">
+                        <div class="message__bubble">${text}</div>
+                        <span class="message__time">${time}</span>
+                    </div>
+                </div>`;
+            $("#chatMessages").append(html);
+            scrollToBottom();
+        }
+
+        function appendTypingIndicator() {
+            const html = `
+                <div class="message message--bot" id="typingIndicator">
+                    <div class="message__avatar">
+                        <i class="fa-solid fa-stethoscope"></i>
+                    </div>
+                    <div class="message__body">
+                        <div class="message__bubble typing-bubble">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>`;
+            $("#chatMessages").append(html);
+            scrollToBottom();
+        }
+
+        function removeTypingIndicator() {
+            $("#typingIndicator").remove();
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // ── Init ─────────────────────────────────────────────────
+        $(document).ready(function () {
+            $("#welcomeTime").text(currentTime());
+
+            function sendMessage() {
+                const userText = $("#userInput").val().trim();
+                if (!userText) return;
+
+                $("#userInput").val("");
+                appendUserMessage(userText);
+                appendTypingIndicator();
+                $("#sendBtn").prop("disabled", true);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/get",
+                    data: { msg: userText },
+                    success: function (response) {
+                        removeTypingIndicator();
+                        appendBotMessage(response);
+                    },
+                    error: function () {
+                        removeTypingIndicator();
+                        appendBotMessage("Sorry, something went wrong. Please try again.");
+                    },
+                    complete: function () {
+                        $("#sendBtn").prop("disabled", false);
+                        $("#userInput").focus();
+                    }
+                });
+            }
+
+            $("#sendBtn").on("click", sendMessage);
+            $("#userInput").on("keydown", function (e) {
+                if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
