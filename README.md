@@ -21,7 +21,7 @@ A **Retrieval-Augmented Generation (RAG)** chatbot that answers general medical 
 
 ## ✨ Features
 
-- 🔍 **RAG Pipeline** - Retrieves relevant passages from 7 mental health PDFs before generating answers, reducing hallucination
+- 🔍 **RAG Pipeline** - Retrieves relevant passages from several mental health PDFs before generating answers, reducing hallucination
 - 🧠 **Semantic Search** - HuggingFace `all-MiniLM-L6-v2` embeddings stored and queried via Pinecone
 - 💬 **Conversational UI** - Clean chat interface with typing indicators and message timestamps
 - ⚠️ **Safety-First Prompting** - Always reminds users to consult a licensed physician; declines out-of-scope questions
